@@ -1,3 +1,6 @@
 .idea/*
 lib/*
 target/*
+
+# config files
+src/main/java/org/svao/sumati/config/Box.java

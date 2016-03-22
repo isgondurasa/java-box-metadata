@@ -44,21 +44,23 @@ public class Main {
         BoxUser.Info userInfo = BoxUser.getCurrentUser(boxConnection).getInfo();
         System.out.println(userInfo.getLogin());
 
-
         BoxFolder rootFolder = BoxFolder.getRootFolder(boxConnection);
         listFolder(rootFolder, 0);
     }
-
-    private void createDataset() {
-
-    }
-
 
     public static void main(String [] args) {
         System.out.println("Start test application");
         Xlsx xlsxReader = new Xlsx();
         try {
-            xlsxReader.readFile("/Users/asviridov/projects/box-contracts/scripts/test_metadata_sheet.xlsx");
+            String filePath = "/Users/asviridov/projects/box-contracts/scripts/test_metadata_sheet.xlsx";
+            System.out.println("Reading file");
+            DataSet excelData = xlsxReader.readFile(filePath);
+
+            if (excelData == null) {
+                System.out.println("No Data. Exiting..");
+                System.exit(0);
+            }
+
         } catch(Exception e) {
             System.out.println(e);
         }

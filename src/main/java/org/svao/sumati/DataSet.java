@@ -3,6 +3,8 @@ package org.svao.sumati;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import com.box.sdk.BoxJSONObject;
 /**
  * Created by asviridov on 22/03/16.
  */
@@ -59,4 +61,5 @@ public class DataSet {
         ArrayList row = (ArrayList) getCurrentRow();
         dataSet.add(row);
     }
+
 }

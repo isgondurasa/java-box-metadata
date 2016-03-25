@@ -8,4 +8,6 @@ public class XlsxConfig {
     public static final int HEADER_POS = 0;
     public static final int TYPE_POS = 1;
     public static final int VALUE_POS = 2;
+
+    public static final String FILE_PATH = "/Users/asviridov/projects/box-contracts/scripts/test_metadata_sheet.xlsx";
 }

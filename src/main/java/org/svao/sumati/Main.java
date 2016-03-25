@@ -5,67 +5,38 @@
 package org.svao.sumati;
 
 import org.svao.sumati.config.Box;
-import com.box.sdk.BoxAPIConnection;
+import org.svao.sumati.config.XlsxConfig;
 
-import com.box.sdk.BoxFolder;
-import com.box.sdk.BoxFile;
-import com.box.sdk.BoxItem;
-import com.box.sdk.BoxUser;
-import com.box.sdk.Metadata;
 
 
 public class Main {
 
 
-    private static void listFolder(BoxFolder folder, int depth) {
-        for (BoxItem.Info itemInfo: folder) {
-
-            System.out.println(itemInfo.getName());
-
-            if (itemInfo instanceof BoxFolder.Info) {
-                BoxFolder childFolder = (BoxFolder) itemInfo.getResource();
-                if (depth < Box.MAX_DEPTH) {
-                    listFolder(childFolder, depth + 1);
-                }
-            } else if (itemInfo instanceof BoxFile.Info) {
-                BoxFile boxFile = (BoxFile) itemInfo.getResource();
-                if (itemInfo.getName().equals("avi kapoor.txt")) {
-                    Metadata metadata = boxFile.getMetadata("andrey");
-                    System.out.println(boxFile.toString());
-                }
-            }
-        }
-    }
-
-    private static void connectToBox() {
-        BoxAPIConnection boxConnection = new BoxAPIConnection(Box.DEV_TOKEN);
-        System.out.println(boxConnection);
-
-        BoxUser.Info userInfo = BoxUser.getCurrentUser(boxConnection).getInfo();
-        System.out.println(userInfo.getLogin());
-
-        BoxFolder rootFolder = BoxFolder.getRootFolder(boxConnection);
-        listFolder(rootFolder, 0);
+    private void importDataToBox(DataSet dateSet) {
+        BoxHelper boxHelper = new BoxHelper(Box.DEV_TOKEN);
+        boxHelper.connect();
+        boxHelper.importTemplate(Box.BOX_FOLDER_ID);
+        boxHelper.getFiles();
     }
 
     public static void main(String [] args) {
         System.out.println("Start test application");
         Xlsx xlsxReader = new Xlsx();
+
         try {
-            String filePath = "/Users/asviridov/projects/box-contracts/scripts/test_metadata_sheet.xlsx";
+
             System.out.println("Reading file");
-            DataSet excelData = xlsxReader.readFile(filePath);
+            DataSet excelData = xlsxReader.readFile(XlsxConfig.FILE_PATH);
 
             if (excelData == null) {
                 System.out.println("No Data. Exiting..");
                 System.exit(0);
             }
 
+            Main m = new Main();
+            m.importDataToBox(excelData);
         } catch(Exception e) {
             System.out.println(e);
         }
-
-        //testing
-        connectToBox();
     }
 }

@@ -3,4 +3,4 @@ lib/*
 target/*
 
 # config files
-src/main/java/org/svao/sumati/config/Box.java
+src/main/java/org/svao/sumati/config/BoxConfig.java

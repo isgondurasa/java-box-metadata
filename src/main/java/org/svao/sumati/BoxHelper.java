@@ -6,9 +6,10 @@ package org.svao.sumati;
 
 import com.box.sdk.*;
 
-import org.svao.sumati.config.Box;
+import org.svao.sumati.config.BoxConfig;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class BoxHelper {
@@ -21,12 +22,12 @@ public class BoxHelper {
         setDevToken(_devToken);
     }
 
-    public void setDevToken(String _devToken) {
-        devToken = _devToken;
-    }
-
     public String getDevToken() {
         return devToken;
+    }
+
+    public void setDevToken(String _devToken) {
+        devToken = _devToken;
     }
 
     public BoxAPIConnection getBoxConnection() {
@@ -56,7 +57,7 @@ public class BoxHelper {
 
             if (itemInfo instanceof BoxFolder.Info) {
                 BoxFolder childFolder = (BoxFolder) itemInfo.getResource();
-                if (depth < Box.MAX_DEPTH) {
+                if (depth < BoxConfig.MAX_DEPTH) {
                     listFolder(childFolder, depth + 1);
                 }
             } else if (itemInfo instanceof BoxFile.Info) {
@@ -80,31 +81,42 @@ public class BoxHelper {
         return null;
     }
 
-    public void getTemplateNames() {
+    public void importData(HashMap ds) {
 
         for (Object obj: getFiles()) {
+            BoxFile boxFile = (BoxFile) obj;
             try {
-                BoxFile f = (BoxFile) obj;
-                Metadata metadata = f.getMetadata();
-                String templateName = metadata.getTemplateName();
-                String d = metadata.get("/metadata_templates/enterprise/schema");
-                String p = metadata.get("/metadata");
-                System.out.println(d + " " + p);
-            } catch (BoxAPIException e) {
-                System.out.println(e);
+                Metadata metaData = boxFile.getMetadata(BoxConfig.BOX_TEMPLATE_NAME);
+            } catch(BoxAPIException e) {
+                Metadata metaData = new Metadata();
+                //boxFile.createMetadata(BoxConfig.BOX_TEMPLATE_NAME, metaData)
+                createMetadata(boxFile, BoxConfig.BOX_TEMPLATE_NAME, ds);
             }
         }
     }
 
-    public void createMetadata() {
-        Metadata metadata = new Metadata();
+    public void createMetadata(BoxFile boxFile, String templateName, HashMap ds) throws BoxAPIException {
+        Metadata metaData = new Metadata();
+        System.out.println(boxFile.getInfo().getName());
+
+        Object k = (Object) ds.get(boxFile.getInfo().getName());
+        if (k != null) {
+            ArrayList<Object> els =  ds.get(k);
+
+            for (Element el : els) {
+                metaData.add(el.fieldName, value);
+            }
+
+        }
+
+        boxFile.createMetadata(metaData);
     }
 
-    public void importTemplate(String folderId) {
+    public void importTemplate(String folderId, HashMap ds) {
         BoxFolder folder = getRootFolder(folderId);
         if (folder != null) {
             listFolder(folder, 0);
-            getTemplateNames();
+            importData(ds);
         }
     }
 

@@ -7,6 +7,7 @@ package org.svao.sumati;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -14,6 +15,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.svao.sumati.config.XlsxConfig;
 
 public class Xlsx {
 
@@ -27,28 +29,38 @@ public class Xlsx {
 
         DataSet ds = DataSet.getInstance();
 
+        ArrayList <String> headers = new ArrayList<String>();
 
+        int rowNum = 0;
         while (it.hasNext()) {
             Row nextRow = it.next();
-
             Iterator <Cell> cellIterator = nextRow.cellIterator();
 
-            ds.createRow();
+
+            if (rowNum > XlsxConfig.TYPE_POS) {
+                ds.createRow();
+            }
 
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
 
                 switch (cell.getCellType()) {
                     case Cell.CELL_TYPE_STRING:
-                        ds.addToRow(cell.getStringCellValue());
+
+                        if (rowNum == XlsxConfig.HEADER_POS){
+                            ds.addToHeaders(cell.getStringCellValue());
+                        } else if (rowNum == XlsxConfig.TYPE_POS) {
+
+                        } else {
+                            ds.addToDataRow(cell.getStringCellValue());
+                        }
                         break;
                     case Cell.CELL_TYPE_NUMERIC:
-                        ds.addToRow(cell.getNumericCellValue());
+                        ds.addToDataRow(cell.getNumericCellValue());
                         break;
                 }
-                System.out.print(" - ");
             }
-            System.out.println();
+            rowNum++;
         }
         workbook.close();
         inputStream.close();

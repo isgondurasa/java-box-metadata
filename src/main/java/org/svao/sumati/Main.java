@@ -4,18 +4,19 @@
 
 package org.svao.sumati;
 
-import org.svao.sumati.config.Box;
+import org.svao.sumati.config.BoxConfig;
 import org.svao.sumati.config.XlsxConfig;
 
+import java.util.HashMap;
 
 
 public class Main {
 
 
-    private void importDataToBox(DataSet dateSet) {
-        BoxHelper boxHelper = new BoxHelper(Box.DEV_TOKEN);
+    private void importDataToBox(HashMap dataSet) {
+        BoxHelper boxHelper = new BoxHelper(BoxConfig.DEV_TOKEN);
         boxHelper.connect();
-        boxHelper.importTemplate(Box.BOX_FOLDER_ID);
+        boxHelper.importTemplate(BoxConfig.BOX_FOLDER_ID, dataSet);
         boxHelper.getFiles();
     }
 
@@ -27,6 +28,7 @@ public class Main {
 
             System.out.println("Reading file");
             DataSet excelData = xlsxReader.readFile(XlsxConfig.FILE_PATH);
+            HashMap map = excelData.toMapOfList();
 
             if (excelData == null) {
                 System.out.println("No Data. Exiting..");
@@ -34,7 +36,8 @@ public class Main {
             }
 
             Main m = new Main();
-            m.importDataToBox(excelData);
+            m.importDataToBox(map);
+
         } catch(Exception e) {
             System.out.println(e);
         }

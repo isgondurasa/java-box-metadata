@@ -3,7 +3,7 @@ package org.svao.sumati.config;
 /**
  * Created by asviridov on 21/03/16.
  */
-public class Box {
+public class BoxConfig {
     public static final String CLIENT_ID = "";
     public static final String CLIENT_SECRET = "";
 

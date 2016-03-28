@@ -86,30 +86,28 @@ public class BoxHelper {
         for (Object obj: getFiles()) {
             BoxFile boxFile = (BoxFile) obj;
             try {
-                Metadata metaData = boxFile.getMetadata(BoxConfig.BOX_TEMPLATE_NAME);
-            } catch(BoxAPIException e) {
-                Metadata metaData = new Metadata();
-                //boxFile.createMetadata(BoxConfig.BOX_TEMPLATE_NAME, metaData)
                 createMetadata(boxFile, BoxConfig.BOX_TEMPLATE_NAME, ds);
+            } catch(BoxAPIException e) {
+                System.out.println(e);
+                System.out.print(e.getResponse());
             }
         }
     }
 
     public void createMetadata(BoxFile boxFile, String templateName, HashMap ds) throws BoxAPIException {
         Metadata metaData = new Metadata();
-        System.out.println(boxFile.getInfo().getName());
+        String fileName = boxFile.getInfo().getName();
+        ArrayList <Element> elements = (ArrayList)ds.get(fileName);
 
-        Object k = (Object) ds.get(boxFile.getInfo().getName());
-        if (k != null) {
-            ArrayList<Object> els =  ds.get(k);
-
-            for (Element el : els) {
-                metaData.add(el.fieldName, value);
-            }
-
+        if (elements == null) {
+            throw new BoxAPIException("Mapping for file: " + fileName + " not found in dataset");
         }
 
-        boxFile.createMetadata(metaData);
+        for (Element e: elements) {
+            metaData.add("/" + e.fieldName, e.value.toString());
+        }
+
+        boxFile.createMetadata(templateName, metaData);
     }
 
     public void importTemplate(String folderId, HashMap ds) {

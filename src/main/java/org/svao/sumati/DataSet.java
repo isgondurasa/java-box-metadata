@@ -3,10 +3,7 @@ package org.svao.sumati;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
-import java.util.Objects;
 
-
-import com.box.sdk.BoxJSONObject;
 import org.svao.sumati.config.XlsxConfig;
 
 /**
@@ -26,20 +23,6 @@ public class DataSet {
             instance = new DataSet();
         }
         return instance;
-    }
-
-    public class Element {
-        public String fieldName;
-        public Object value;
-
-        public Element(String field, Object val) {
-            fieldName = field;
-            value = val;
-        }
-
-        public Element(Object val) {
-            value = val;
-        }
     }
 
     public void addToHeaders(String fieldName) {

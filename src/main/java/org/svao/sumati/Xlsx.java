@@ -16,6 +16,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import org.svao.sumati.config.XlsxConfig;
+
 public class Xlsx {
 
     public DataSet readFile(String filePath) throws IOException{
@@ -40,6 +42,7 @@ public class Xlsx {
                 ds.createRow();
             }
 
+            int colNum = 0;
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
 
@@ -49,15 +52,21 @@ public class Xlsx {
                         if (rowNum == XlsxConfig.HEADER_POS){
                             ds.addToHeaders(cell.getStringCellValue());
                         } else if (rowNum == XlsxConfig.TYPE_POS) {
-
+                            ds.addToTypes(cell.getStringCellValue());
                         } else {
                             ds.addToDataRow(cell.getStringCellValue());
                         }
                         break;
                     case Cell.CELL_TYPE_NUMERIC:
-                        ds.addToDataRow(cell.getNumericCellValue());
+                        String t = (String) ds.getTypes().get(colNum);
+                        if (t.equals("Date")) {
+                            ds.addToDataRow(cell.getDateCellValue());
+                        } else {
+                            ds.addToDataRow(cell.getNumericCellValue());
+                        }
                         break;
                 }
+                colNum++;
             }
             rowNum++;
         }

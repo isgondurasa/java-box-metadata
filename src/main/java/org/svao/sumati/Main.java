@@ -5,6 +5,7 @@
 package org.svao.sumati;
 
 import org.svao.sumati.config.BoxConfig;
+import org.svao.sumati.config.XlsxConfig;
 
 import java.util.HashMap;
 

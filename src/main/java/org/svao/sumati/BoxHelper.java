@@ -8,9 +8,13 @@ import com.box.sdk.*;
 
 import org.svao.sumati.config.BoxConfig;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.util.Date;
+import java.text.DateFormat;
 
 public class BoxHelper {
 
@@ -104,7 +108,35 @@ public class BoxHelper {
         }
 
         for (Element e: elements) {
-            metaData.add("/" + e.fieldName, e.value.toString());
+
+            String fieldType = e.getFieldType();
+            String value = e.getValue().toString();
+            if(fieldType.equals("Date")) {
+                try {
+                    DateFormat dtfBefore = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+                    DateFormat dtfAfter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date dt = dtfBefore.parse(value);
+                    value = dtfAfter.format(dt).toString();
+                    value = value.replace(" ", "T") + "Z";
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+            }
+//            String sValue = null;
+//            Double dValue = null;
+//            if (fieldType == "Number") {
+//                dValue = (Double) e.getValue();
+//                //metaData.add("/" + e.getFieldName(), dValue);
+//            } else if(fieldType == "Date") {
+//                String dateValue = (String) e.getValue();
+//
+//            } else {
+//                sValue = e.getValue().toString();
+//                metaData.add("/" + e.getFieldName(), sValue);
+//            }
+
+
+    metaData.add("/" + e.getFieldName(), value);
         }
 
         boxFile.createMetadata(templateName, metaData);

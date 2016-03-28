@@ -16,7 +16,7 @@ public class DataSet {
     private DataSet() {}
     private List <Object> dataSet = new ArrayList<Object>();
     private List<String> headers = new ArrayList<String>();
-
+    private List<String> types = new ArrayList<String>();
 
     public static DataSet getInstance() {
         if (instance == null) {
@@ -29,12 +29,16 @@ public class DataSet {
         headers.add(fieldName);
     }
 
-    public Object getHeaders() {
+    public void addToTypes(String type) {
+        types.add(type);
+    }
+
+    public List getHeaders() {
         return headers;
     }
 
-    public Object getTypes() {
-        return dataSet.get(XlsxConfig.TYPE_POS);
+    public List getTypes() {
+        return types;
     }
 
     public void createRow() {
@@ -65,6 +69,8 @@ public class DataSet {
 
     public HashMap toMapOfList() {
         ArrayList <String> headers = (ArrayList) getHeaders();
+        ArrayList <String> types = (ArrayList) getTypes();
+
         HashMap<String, ArrayList> map = new HashMap<String, ArrayList>();
 
         for (Object row: dataSet) {
@@ -72,11 +78,12 @@ public class DataSet {
             int pos = 0;
             for (Object obj: arrayEl) {
                 Element el = (Element) obj;
-                el.fieldName = headers.get(pos);
+                el.setFieldName(headers.get(pos));
+                el.setFieldType(types.get(pos));
                 pos++;
             }
             Element el = (Element) arrayEl.get(arrayEl.size() - 1);
-            map.put((String) el.value, arrayEl);
+            map.put((String) el.getValue(), arrayEl);
         }
 
         return map;
